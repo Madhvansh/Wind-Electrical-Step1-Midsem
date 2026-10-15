@@ -1,0 +1,10 @@
+Source: https://powerline.net.in/2026/07/03/cea-notifies-cea-technical-standards-for-construction-of-electrical-plants-and-electric-lines-amendment-regulations-2026/
+
+# CEA notifies CEA (Technical Standards for Construction of Electrical Plants and Electric Lines) (Amendment) Regulations, 2026
+
+Power Line, 3 Jul 2026. This is a substitute for the requested SolarQuarter summary (solarquarter.com blocks automated fetches) and for the gazette PDF (cea.nic.in returned 404 to automated fetch). Notification dated 22.06.2026; in effect 1 April 2027 per Mondaq/Mercom coverage.
+
+The Central Electricity Authority (CEA) has notified the Technical Standards for Construction of Electrical Plants and Electric Lines (Amendment) Regulations, 2026, introducing comprehensive technical standards for the construction of solar power plants, floating solar plants, onshore and offshore wind power plants, and battery energy storage systems (BESS). The regulations will come into effect on April 1, 2027.
+
+For solar power plants, the regulations prescribe a minimum design life of 25 years. They also require photovoltaic modules installed in highly corrosive environments to pass salt mist corrosion tests and include bypass diodes to maintain power output if a solar cell fails. For floating solar projects, they lay down standards for site selection, bathymetric surveys, mooring and anchoring systems, cable routing, earthing and safety measures. For onshore wind projects, the regulations prescribe minimum turbine spacing to reduce wake losses and improve energy generation. Moreover, offshore wind projects must maintain a minimum blade-tip clearance of 22 metres above mean high water spring. Additionally, the regulations introduce technical standards for BESS. Projects of 50 MW and above must provide automatic generation control, grid-forming inverter capability and black-start capability. In addition, the regulations specify requirements for battery management systems, battery containers, and safety, monitoring and communication systems.
+

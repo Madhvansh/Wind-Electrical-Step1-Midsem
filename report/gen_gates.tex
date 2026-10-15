@@ -1,0 +1,23 @@
+Every model was checked by scripted gates against analytic results or invariants (tolerances are those coded in the simulation scripts). All 16 gates of Tasks A, B and C pass (Table~\ref{tab:gates}); none failed and none is missing.
+
+\begin{table}[H]\centering\footnotesize\setlength{\tabcolsep}{3pt}\renewcommand{\arraystretch}{1.12}
+\caption{Verification gates of Tasks A, B and C.}\label{tab:gates}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{5.3cm}>{\raggedright\arraybackslash}p{8.3cm}c@{}}\toprule
+Gate & What it checks & Value & Status\\\midrule
+GA1 & $C_{p,max}$ is below the Betz limit & $0.4800<16/27=0.5926$ & PASS\\
+GA2 & $\lambda_{opt}$ and $C_{p,max}$ lie in the band expected for this rotor (7.5 to 8.7; 0.47 to 0.49) & $\lambda_{opt}=8.100$, $C_{p,max}=0.4800$ & PASS\\
+GA3 & Rated power at rated wind speed (tolerance 1 percent) & $P_{avail}(12\ \mathrm{m/s})=2000$ kW & PASS\\
+GA4 & $P_{aero}$ re-evaluated at each deloaded operating point reproduces $P_{del}$ (6 to 14 m/s) & maximum relative error $6.5\times10^{-14}$ (limit $10^{-3}$) & PASS\\
+GA5 & Deloaded speed is on the overspeed side, $\omega_{del}>\omega_{opt}$, at every overspeed wind speed & 6 to 11 m/s, e.g. 23.28 against 19.67 rpm at 9 m/s & PASS\\
+GA6 & Annual-energy loss equals the 10 percent deload target (tolerance 0.5 percentage points) & loss 10.00 percent & PASS\\\midrule
+GB1 & Pre-event steady state: no drift before the step & $\Delta f=0$ in all five cases; initial residual below $1.5\times10^{-17}$ & PASS\\
+GB2 & Centre-of-inertia RoCoF after the step against the analytic $\Delta P\,f_0/(2H_{sys})$ (limit 15 percent) & error 0.19 percent (C0), 0.24 percent (C1), 0.93 percent (C4) & PASS\\
+GB3 & Steady-state deviation of C1 against the analytic value (limit 5 percent) & $-0.14826$ Hz analytic, $-0.14826$ Hz simulated; relative error $1.1\times10^{-10}$ & PASS\\
+GB4 & Energy bookkeeping $\int(P_{aero}-P_e)\,dt=\Delta E_k$ for C2, C3, C4 (limit 1 percent) & relative errors $4.1\times10^{-12}$, $6.7\times10^{-12}$, $3.1\times10^{-12}$ & PASS\\
+GB5 & The C4 rotor stays on the overspeed side (no stall) & minimum $\omega_r=0.8311$ pu against the limit 0.7400 pu & PASS\\
+GB6 & C4 beats C1 and C2 on nadir, and beats C1 on RoCoF & nadir 49.906 against 49.659 (C1) and 49.815 Hz (C2); RoCoF at 500 ms 0.116 against 0.305 Hz/s (C1) & PASS\\\midrule
+GC1 & GFL static limit (voltage loop off, $i_q=0$): last SCR with an equilibrium against the theory $2P_0$ (limit 2 percent) & numeric 2.000, theory 2.000, error 0.00 percent & PASS\\
+GC2 & GFM swing mode at SCR 5: numerical eigenvalue against closed form (limit 2 percent) & $\omega_n=14.713$ and $9.305$ rad/s, $\zeta=0.1699$ and $0.1075$ for $H=2$ and 5 s; errors below $10^{-9}$ & PASS\\
+GC3 & GFL stable in a strong grid & at SCR 10 the maximum real part is $-2.05$ 1/s for the 10, 20 and 40 Hz PLL & PASS\\
+GC4 & Trends: GFL damping lowest at SCR 1.5 and every GFL variant reaches the right half plane; GFM damping rises as SCR falls and is monotone for $H=5$ s & GFL 10 Hz: $\zeta=0.702,\ 0.646,\ 0.195$ at SCR 10, 3, 1.5; GFM $H=5$ s: 0.090 at SCR 10, 0.158 at SCR 2 & PASS\\\bottomrule
+\end{tabular}\end{table}

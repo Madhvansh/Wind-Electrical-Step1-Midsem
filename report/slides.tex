@@ -1,0 +1,89 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usetheme{default}
+\usecolortheme[named=blue]{structure}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}[frame number]
+\usepackage{amsmath,amssymb,graphicx,booktabs,xcolor,array}
+\newcommand{\GenInput}[1]{\IfFileExists{#1.tex}{\input{#1.tex}}{}}
+\newcommand{\SFig}[2][0.62]{%
+ \IfFileExists{../figures/#2.pdf}{\includegraphics[height=#1\textheight,width=\linewidth,keepaspectratio]{../figures/#2.pdf}}%
+ {\fbox{\parbox[c][4cm][c]{0.7\linewidth}{\centering\texttt{\detokenize{#2}}\\ figure pending}}}}
+\title{Grid-Forming PMSG Wind Turbine with Rotor Kinetic-Energy Reserve}
+\subtitle{Step 1 Progress Report, Wind Electrical Systems}
+\author{Madhvansh (2023A8PS0561G)}
+\institute{BITS Pilani, K K Birla Goa Campus}
+\date{12 October 2026}
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+
+\begin{frame}{Problem and India context}
+\begin{itemize}
+\item Converter-interfaced wind: no natural inertia
+\item GFL (PLL) control weakens at low SCR
+\item About 54 GW wind installed by late 2025
+\item GRID-INDIA GFM paper (Feb 2026): BESS and solar focus, little on wind
+\item Ember: 68 events (Jan 2022 to Jul 2025) with $>1$ GW RE lost in one incident; PLL instability, Rajasthan
+\item CEA amendment applies from 1 April 2027
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Link to course theory}
+\centering\SFig{A1_cp_curves}\\[2pt]
+{\small Betz $16/27$; $C_p(\lambda,\beta)$; MPPT on the $C_p$-optimal line, $P=K_{opt}\omega^3$}
+\end{frame}
+
+\begin{frame}{Key idea: overspeed deloading}
+\centering\SFig[0.58]{A2_power_speed}\\[2pt]
+{\small Operate right of the optimum: slowing the rotor raises $P_{aero}$, so no secondary dip}
+\end{frame}
+
+\begin{frame}{Reserve and kinetic energy}
+\centering\SFig[0.58]{A4_reserve}\\[2pt]
+{\small Deload to $0.9\,C_{p,max}$; reserve and kinetic energy released together}
+\end{frame}
+
+\begin{frame}{Test system and cases}
+Equivalent SG fleet, reheat governor; DC power flow, $X_{13}=0.25$, $X_{23}=0.20$ pu (1000 MVA); 40\% wind; 50 MW load step.
+\vspace{4pt}
+\begin{center}\small
+\begin{tabular}{ll}\toprule
+Case & Description\\\midrule
+C0 & Placeholder: baseline\\
+C1 & Placeholder\\
+C2 & Placeholder\\
+C3 & Placeholder\\
+C4 & Placeholder\\\bottomrule
+\end{tabular}\end{center}
+\end{frame}
+
+\begin{frame}{Frequency result}
+\centering\SFig[0.65]{B1_frequency}
+\end{frame}
+
+\begin{frame}{Why GFM wins}
+\begin{columns}[c]
+\column{0.5\textwidth}\centering\SFig[0.55]{B2_wind_response}
+\column{0.5\textwidth}\centering\SFig[0.55]{B3_metrics}
+\end{columns}
+\end{frame}
+
+\begin{frame}{Penetration sweep}
+\centering\SFig[0.65]{B4_penetration}
+\end{frame}
+
+\begin{frame}{Weak-grid duality}
+\centering\SFig[0.65]{C1_weakgrid_stability}
+\end{frame}
+
+\begin{frame}{Verification checks}
+\footnotesize\GenInput{gen_gates}
+\end{frame}
+
+\begin{frame}{Next steps}
+\begin{itemize}
+\item Step 2: detailed PMSG dq model, machine and grid converters, DC link
+\item Dual-port GFM (Lyu and Gross); current limiting, fault ride-through
+\item Step 3: IEEE 9-bus, turbulence, Indian grid-code comparison, final report
+\end{itemize}
+\end{frame}
+\end{document}

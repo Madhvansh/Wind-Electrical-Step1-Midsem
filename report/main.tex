@@ -1,0 +1,135 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{amsmath,amssymb,graphicx,booktabs,hyperref,xcolor,caption,float,array}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+\captionsetup{font=small,labelfont=bf}
+\setlength{\parskip}{3pt}
+\newcommand{\GenInput}[1]{\IfFileExists{#1.tex}{\input{#1.tex}}{}}
+\newcommand{\Fig}[3][0.85]{%
+ \begin{figure}[H]\centering
+ \IfFileExists{../figures/#2.pdf}{\includegraphics[width=#1\linewidth]{../figures/#2.pdf}}%
+ {\fbox{\parbox[c][3.5cm][c]{0.8\linewidth}{\centering\texttt{\detokenize{#2}}\\ figure pending}}}%
+ \caption{#3}\label{fig:#2}\end{figure}}
+\newcommand{\pu}{\,\mathrm{pu}}
+\title{Grid-Forming Control of a PMSG Wind Turbine Using Rotor Kinetic-Energy Reserve for Inertia and Fast Frequency Support in Weak Grids\\[4pt]\large Step 1 Progress Report (Mid-Semester Evaluation), Wind Electrical Systems Design Project}
+\author{Madhvansh (2023A8PS0561G)\\BITS Pilani, K K Birla Goa Campus}
+\date{12 October 2026}
+\begin{document}
+\maketitle
+\begin{abstract}
+\GenInput{gen_abstract}
+\end{abstract}
+\begin{center}\fbox{\parbox{0.94\linewidth}{\small\textbf{Key numbers.}\\ \GenInput{gen_keynumbers}}}\end{center}
+
+\section{Motivation and problem}
+Converter-interfaced wind turbines give no natural inertia: the rotor's kinetic energy is hidden behind the power-electronic interface. Conventional grid-following (GFL) control, which synchronises through a phase-locked loop (PLL), also weakens as the short-circuit ratio (SCR) falls, because the PLL must track a voltage that the converter itself disturbs.
+
+The Indian context makes this urgent. About 54 GW of wind was installed by late 2025. A GRID-INDIA discussion paper on grid-forming inverters (February 2026) recommends GFM but focuses on battery storage and solar, and says little specific about wind \cite{gridindia}; this project addresses that gap. Ember reports 68 events between January 2022 and July 2025 in which more than 1 GW of renewable generation was lost in a single incident, traced to ride-through failures, protection settings and PLL instability under weak-grid conditions, concentrated in the Rajasthan RE complexes \cite{ember}. The CEA technical-standards amendment of 2026 applies from 1 April 2027 \cite{cea}.
+
+\section{Link to course theory}
+From the course notes \cite{bhadra}: the Betz limit $C_p\le 16/27\approx0.593$; the power coefficient $C_p(\lambda,\beta)$ versus tip-speed ratio (TSR) $\lambda$; and operation on the $C_p$-optimal line (MPPT), $P=K_{opt}\omega^3$. The control strategies covered (pitch control, electrical power control through the power-electronic interface, yaw, and braking) map directly onto this work: pitch limits speed, the converter shapes electrical power, while yaw and braking are not needed for the frequency problem.
+
+\textbf{Key idea.} Deliberately operate \emph{off} the $C_p$-optimal line, on the overspeed side. There, slowing the rotor \emph{raises} aerodynamic power, so kinetic energy and the power reserve are released together and no secondary dip follows (unlike MPPT-based inertia emulation, which recovers by drawing power back).
+
+\section{Objectives and scope}
+The full project has three steps. \textbf{Step 1 (this report):} aggregated aerodynamic and swing models, GFL versus GFM frequency support on a Kundur-type test system, and a quasi-static weak-grid stability study. \textbf{Step 2:} detailed PMSG dq model with converters and DC link, dual-port GFM, current limiting and ride-through. \textbf{Step 3:} IEEE 9-bus test, turbulence, comparison with Indian grid-code requirements and the final report (Section~\ref{sec:plan}).
+
+\section{Models and methods}
+\subsection{Aerodynamics}
+The Heier $C_p$ model \cite{heier} is
+\begin{equation}
+C_p(\lambda,\beta)=c_1\Big(\frac{c_2}{\lambda_i}-c_3\beta-c_4\Big)e^{-c_5/\lambda_i}+c_6\lambda,\quad
+\frac1{\lambda_i}=\frac1{\lambda+0.08\beta}-\frac{0.035}{\beta^3+1},
+\end{equation}
+with $(c_1,\dots,c_6)=(0.5176,116,0.4,5,21,0.0068)$. Turbine data are in Table~\ref{tab:turb}.
+\begin{table}[H]\centering\caption{Turbine data.}\label{tab:turb}
+\begin{tabular}{lc|lc}\toprule
+Rotor radius $R$ & 35.4 m & Inertia constant $H$ & 3 s\\
+Rating & 2 MW & $\lambda_{opt}$ & 8.10\\
+Rated wind speed & 12 m/s & $C_{p,max}$ & 0.480\\
+Rated speed & 26.2 rpm & Speed limits & 0.5 to 1.2 pu\\\bottomrule
+\end{tabular}\end{table}
+\subsection{MPPT, deloading and rotor swing}
+MPPT follows $P=K_{opt}\omega^3$. Overspeed deloading selects the operating TSR $\lambda_{del}>\lambda_{opt}$ such that
+\begin{equation}C_p(\lambda_{del},0)=0.9\,C_{p,max},\end{equation}
+with pitch used only above the rated wind speed (rated speed held, power capped) or where the 1.2 pu speed limit binds. The rotor obeys
+\begin{equation}2H\,\omega\,\frac{d\omega}{dt}=P_{aero}-P_e.\end{equation}
+\subsection{Frequency-support laws}
+The five cases of Table~\ref{tab:cases} differ only in the wind-plant law. In the grid-following cases C2 and C3 the converter adds synthetic inertia and droop, computed from the PLL-measured frequency $\omega_m$ (per unit, first-order lag of 50 ms), to its power set-point:
+\begin{equation}\Delta P_{SI}=-2H_v\frac{d\omega_m}{dt},\qquad \Delta P_{dr}=-\frac{\omega_m-1}{R_w},\end{equation}
+with $H_v=5$ s and $R_w=0.05$, both terms clipped. In C2 (no reserve) the set-point is the MPPT law $K_{opt}\omega_r^3$. In C3 (10 percent reserve) it is the constant deloaded set-point
+\begin{equation}P_e=P_{del}-g(\omega_r)+\Delta P_{SI}+\Delta P_{dr},\qquad g(\omega_r)=K_g\max(0,\omega_{opt}-\omega_r),\end{equation}
+where $P_{del}$ is the constant deloaded set-point (759.4 kW per turbine at 9 m/s) and $g$ is a stall guard with $K_g=5$ pu that acts only if the rotor passes the $C_p$ peak. The GFM case C4 is a virtual synchronous machine (VSM) with the same constant set-point \cite{lyu,darco}:
+\begin{equation}\label{eq:gfm}
+2H_v\frac{d\omega_v}{dt}=P_{del}-g(\omega_r)+\Delta P_{dr}-P_e-D_d(\omega_v-\omega_3),
+\end{equation}
+where $\Delta P_{dr}=\mathrm{clip}\big(-(\omega_v-1)/R_w,\,\pm\Delta P_{res}\big)$ is the droop term clipped at the reserve ($\Delta P_{res}=84.4$ kW per turbine, 40 MW for the plant) and $\omega_3$ is the PCC (load-bus) frequency used for the damping, as in D'Arco and Suul \cite{darco}. The damping gain $D_d=100$ was chosen from the ladder 40, 60, 80, 100 to give the electromechanical mode of the SG fleet and the VSM a damping ratio of 0.312; referencing the damping to the washed-out own frequency instead reached at most 0.153. A constant set-point is used (and not an MPPT-type law $k_{del}\omega_r^3$) because on the overspeed side $dP_{aero}/d\omega<0$, so a constant set-point is self-stabilising, and as the rotor slows the aerodynamic power rises and the full reserve is released.
+\subsection{Test system and cases}
+An equivalent synchronous-generator (SG) fleet ($H=5$ s) with a reheat steam governor \cite{kundur} (droop 0.05, $T_G=0.2$ s, $T_{CH}=0.3$ s, $F_{HP}=0.3$, $T_{RH}=7$ s) is connected through a DC power-flow network with $X_{13}=0.25$ and $X_{23}=0.20\pu$ on 1000 MVA. Wind supplies 40 percent of the load at 9 m/s (474 turbines of 2 MW, 948 MW installed); the disturbance is a 50 MW (5 percent) load step at $t=1$ s.
+\begin{table}[H]\centering\small\caption{Simulated cases (wind-plant law).}\label{tab:cases}
+\begin{tabular}{@{}l>{\raggedright\arraybackslash}p{13.6cm}@{}}\toprule
+Case & Wind-plant control\\\midrule
+C0 & All-synchronous baseline (no wind)\\
+C1 & Grid-following, MPPT $P_e=K_{opt}\omega_r^3$, no frequency support\\
+C2 & Grid-following MPPT with synthetic inertia and droop, no reserve\\
+C3 & Grid-following with synthetic inertia and droop and a 10 percent overspeed reserve\\
+C4 & Grid-forming VSM with the same 10 percent reserve (proposed)\\\bottomrule
+\end{tabular}\end{table}
+\subsection{Weak-grid model}
+A quasi-static small-signal model compares an SRF-PLL GFL converter against a VSM GFM converter while sweeping the SCR \cite{li,ieee1204}.
+\subsection{Assumptions}
+The wind plant is aggregated into one equivalent turbine; the converter is averaged (no switching); network flows use DC power flow; and the network is quasi-static (no electromagnetic transients). Results are therefore valid for electromechanical time scales only.
+
+\section{Results}
+\subsection{Aerodynamic design}
+\GenInput{gen_results_A}
+\Fig{A1_cp_curves}{$C_p$ versus TSR for several pitch angles, with the optimal and deloaded points.}
+\Fig{A2_power_speed}{Turbine power versus rotor speed, MPPT line and overspeed deloaded line.}
+\Fig{A3_power_curve}{Power curve of the 2 MW turbine.}
+\Fig{A4_reserve}{Power reserve and releasable kinetic energy versus wind speed.}
+\Fig{A5_economics}{Annual energy at an illustrative Indian onshore site (Weibull $k=2$, $c=7.5$ m/s): MPPT versus 10 percent deloaded.}
+\subsection{Frequency support}
+\GenInput{gen_results_B}
+\Fig{B1_frequency}{System frequency after the 50 MW load step for the cases C0 to C4.}
+\Fig{B2_wind_response}{Wind turbine response during the event.}
+\Fig{B3_metrics}{Frequency metrics (nadir, RoCoF) by case.}
+\Fig{B4_penetration}{Sensitivity to wind penetration.}
+\Fig{B5_weak_connection}{Effect of a weak connection on frequency support.}
+\subsection{Weak-grid stability}
+\GenInput{gen_results_C}
+\Fig{C1_weakgrid_stability}{GFL versus GFM stability margin over the SCR sweep.}
+\Fig{C2_eig_loci}{Eigenvalue loci over the SCR sweep.}
+
+\section{Verification}
+\GenInput{gen_gates}
+
+\section{Plan for Step 2 and Step 3}\label{sec:plan}
+\begin{table}[H]\centering\caption{Work plan.}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.4cm}p{12cm}}\toprule
+Weeks & Task\\\midrule
+Step 2, 1--2 & Detailed PMSG dq model: machine-side and grid-side converters, DC link\\
+Step 2, 3--4 & Dual-port GFM control after Lyu and Gross \cite{lyu}\\
+Step 2, 5 & Current limiting and fault ride-through\\
+Step 3, 6--7 & IEEE 9-bus test system; wind-speed turbulence\\
+Step 3, 8--9 & Comparison with Indian grid-code requirements \cite{cerc,cea}\\
+Step 3, 10 & Final report and presentation\\\bottomrule
+\end{tabular}\end{table}
+
+\begin{thebibliography}{99}\small
+\bibitem{lyu} Y. Lyu and D. Gross, Grid forming fast frequency response for PMSG-based wind turbines, \emph{IEEE Trans. Sustainable Energy}, vol. 15, no. 1, pp. 23--38, 2024.
+\bibitem{lyu2} Y. Lyu, I. Subotic and D. Gross, Unified grid-forming control of PMSG wind turbines for fast frequency response and MPPT, IREP 2022, arXiv:2207.09536.
+\bibitem{yao} Yao et al., Grid-forming wind turbine control based on novel deloading strategy and adaptive configurable natural droop controller, \emph{Frontiers in Energy Research}, 2026, doi:10.3389/fenrg.2026.1823545.
+\bibitem{darco} S. D'Arco and J. A. Suul, Equivalence of virtual synchronous machines and frequency-droops for converter-based microgrids, \emph{IEEE Trans. Smart Grid}, vol. 5, no. 1, pp. 394--395, 2014.
+\bibitem{li} Y. Li, Y. Gu and T. C. Green, Revisiting grid-forming and grid-following inverters: a duality theory, \emph{IEEE Trans. Power Systems}, vol. 37, no. 6, pp. 4541--4554, 2022.
+\bibitem{ullah} J. Ullah, T. Thiringer and D. Karlsson, Temporary primary frequency control support by variable speed wind turbines: potential and applications, \emph{IEEE Trans. Power Systems}, vol. 23, no. 2, pp. 601--612, 2008.
+\bibitem{kundur} P. Kundur, \emph{Power System Stability and Control}, McGraw-Hill, 1994.
+\bibitem{heier} S. Heier, \emph{Grid Integration of Wind Energy Conversion Systems}, Wiley, 1998.
+\bibitem{bhadra} S. N. Bhadra, D. Kastha and S. Banerjee, \emph{Wind Electrical Systems}, Oxford University Press, 2005.
+\bibitem{iecon} An overview of grid-forming control for wind turbine converters, IEEE IECON 2021 (IEEE Xplore 9589838).
+\bibitem{gridindia} GRID-INDIA, Discussion paper on grid-forming inverters, 2026 (reported by Power Line, Feb 2026).
+\bibitem{ember} Ember, Transmission gaps are beginning to constrain India's rapid renewables integration, 2026.
+\bibitem{cea} CEA, Technical Standards for Construction of Electrical Plants and Electric Lines (Amendment) Regulations, 2026.
+\bibitem{cerc} CERC, Indian Electricity Grid Code Regulations, 2023.
+\bibitem{ieee1204} IEEE Std 1204-1997, Guide for planning DC links terminating at AC locations having low short-circuit capacities.
+\end{thebibliography}
+\end{document}
